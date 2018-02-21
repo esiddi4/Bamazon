@@ -26,12 +26,13 @@ connection.connect(function(err) {
 		}
 
 		// run the start function after the connection is made, and all items are displayed, to prompt the user
-		start();
+		selectProduct();
 	});
 
 });
 
-function start() {
+
+function selectProduct() {
 	inquirer
     .prompt({
       name: "ID",
@@ -40,58 +41,56 @@ function start() {
     })
     .then(function(product) {
     	var id = product.ID;
-
-	    inquirer
-	    .prompt({
-	      name: "units",
-	      type: "input",
-	      message: "How many units would you like to buy?"
-	    })
-	    .then(function(response) {
-	    	var units = response.units;
-
-		   	connection.query("SELECT * FROM products WHERE id=?", [id], function(err, res) {
-
-			    if (err) throw err;
-
-			    var newQuantity = res[0].stock_quantity - units;
-			    var totalCost = units * res[0].price;
-
-			    // check if your store has enough of the product to meet the customer's request
-			    if (units > res[0].stock_quantity) {
-			    	console.log("Insufficient quantity!");
-			    } else {
-			    	updateStock(newQuantity, id, totalCost);
-			    }
-
-			    connection.end();
-		  	});
-	    });
-
+    	numberOfUnits(id);
     });
 }
 
 
+function numberOfUnits(id){
+	inquirer
+    .prompt({
+      name: "units",
+      type: "input",
+      message: "How many units would you like to buy?"
+    })
+    .then(function(response) {
+    	var units = response.units;
 
-function updateStock(newQuantity, id, totalCost) {
+	   	connection.query("SELECT * FROM products WHERE id=?", [id], function(err, res) {
 
-var cost = totalCost;
+		    if (err) throw err;
 
-  connection.query("UPDATE products SET ? WHERE ?",
-    [
-    {
-      quantity: newQuantity
-    },
-    {
-      id: id
-    }
-    ],
-    function(err, res) {
-      console.log("Your total purchase was " + cost + ".");
-    }
-    )
+		    var newQuantity = res[0].stock_quantity - units;
+		    var totalCost = units * res[0].price;
+
+		    // check if your store has enough of the product to meet the customer's request
+		    if (units > res[0].stock_quantity) {
+		    	console.log("Insufficient quantity!");
+		    } else {
+		    	updateStock(newQuantity, id, totalCost);
+		    }
+
+		    connection.end();
+	  	});
+    });
 }
 
+
+function updateStock(newQuantity, id, totalCost) {
+	connection.query("UPDATE products SET ? WHERE ?",
+	    [
+	    {
+	      stock_quantity: newQuantity
+	    },
+	    {
+	      id: id
+	    }
+	    ],
+	    function(err, res) {
+	      console.log("Your total purchase was " + totalCost + ".");
+	    }
+	)
+}
 
 
 
