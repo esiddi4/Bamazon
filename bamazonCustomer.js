@@ -37,7 +37,13 @@ function selectProduct() {
     .prompt({
       name: "ID",
       type: "input",
-      message: "Provide the ID of the item would you like to buy."
+      message: "Provide the ID of the item would you like to buy.",
+      validate: function(value) {
+		if (isNaN(value) === false) {
+			return true;
+		}
+		return false;
+      }
     })
     .then(function(product) {
     	var id = product.ID;
@@ -51,7 +57,13 @@ function numberOfUnits(id){
     .prompt({
       name: "units",
       type: "input",
-      message: "How many units would you like to buy?"
+      message: "How many units would you like to buy?",
+      validate: function(value) {
+        if (isNaN(value) === false) {
+        	return true;
+        }
+        return false;
+      }
     })
     .then(function(response) {
     	var units = response.units;
