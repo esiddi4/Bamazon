@@ -18,7 +18,7 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
   if (err) throw err;
 
-	// display all of the items available for sale
+	// display all of the items available for sale to customer
 	var query = "SELECT * FROM products";
 	connection.query(query, function(err, res) {
 		for (var i = 0; i < res.length; i++) {
