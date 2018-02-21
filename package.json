@@ -1,0 +1,25 @@
+{
+  "name": "Bamazon",
+  "version": "1.0.0",
+  "description": "An Amazon-like storefront using Node.js &amp; MySQL. The app will take in orders from customers and deplete stock from the store's inventory.",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/esiddi4/Bamazon.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/esiddi4/Bamazon/issues"
+  },
+  "homepage": "https://github.com/esiddi4/Bamazon#readme",
+  "dependencies": {
+    "i": "^0.3.6",
+    "inquirer": "^5.1.0",
+    "mysql": "^2.15.0"
+  }
+}
