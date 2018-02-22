@@ -26,6 +26,7 @@ connection.connect(function(err) {
   runSearch();
 });
 
+// ASK MANAGER WHAT HE/SHE WOULD LIKE TO DO
 function runSearch() {
   inquirer
     .prompt({
@@ -61,6 +62,7 @@ function runSearch() {
 }
 
 
+// VIEW ALL PRODUCTS
 function viewProducts() {
 
     var query = "SELECT * FROM products";
@@ -74,9 +76,10 @@ function viewProducts() {
 }
 
 
+// VIEW ALL PRODUCTS WITH AN INVENTORY COUNT LOWER THAN FIVE
 function viewLowInventory() {
 
-	var query = "SELECT * FROM products WHERE stock_quantity < 25";
+	var query = "SELECT * FROM products WHERE stock_quantity < 5";
 	connection.query(query, function(err, res) {
 		for (var i = 0; i < res.length; i++) {
 		  console.log("Product: " + res[i].product_name + " || Inventory: " + res[i].stock_quantity);
@@ -87,6 +90,7 @@ function viewLowInventory() {
 }
 
 
+// ADD STOCK TO INVENTORY
 function addToInventory() {
 
 	connection.query("SELECT * FROM products", function(err, results) {
@@ -120,21 +124,15 @@ function addToInventory() {
 	      .then(function(answer) {
 
 	      	var product = answer.product;
-	      	var units = parseInt(answer.units);
-	  		updateInventory(product, units);
+	      	var quantity = parseInt(answer.units);
+	  		updateInventory(product, quantity);
 
 		  });
 	});
 
 }
 
-
-// function addNewProduct() {
-
-
-// }
-
-
+// Update inventory / MySQL Database
 function updateInventory(product, quantity){
 	// var product = product;
   	connection.query("SELECT * FROM products WHERE product_name = ?", [product] , function(err, results) {
@@ -152,5 +150,64 @@ function updateInventory(product, quantity){
 
 		connection.end();
 	});
-  	// connection.end();
+}
+
+
+// ADD NEW PRODUCT
+function addNewProduct() {
+// prompt for info about the product being added
+  inquirer
+    .prompt([
+      {
+        name: "product",
+        type: "input",
+        message: "What is the product to be added?"
+      },
+      {
+        name: "department",
+        type: "input",
+        message: "What department would you like to add this product to?"
+      },
+      {
+        name: "price",
+        type: "input",
+        message: "What is the price per unit of this product?",
+        validate: function(value) {
+          if (isNaN(value) === false) {
+            return true;
+          }
+          return false;
+        }
+      },
+      {
+        name: "stockQty",
+        type: "input",
+        message: "How many units are this product are being added to inventory?",
+        validate: function(value) {
+          if (isNaN(value) === false) {
+            return true;
+          }
+          return false;
+        }
+      }
+    ])
+    .then(function(answer) {
+      // when finished prompting, insert a new item into the db with that info
+      connection.query(
+        "INSERT INTO products SET ?",
+        {
+          product_name: answer.product,
+          department_name: answer.department,
+          price: answer.price,
+          stock_quantity: answer.stockQty
+        },
+        function(err) {
+          if (err) throw err;
+          console.log(answer.product + " was successfully added!");
+        }
+      );
+
+      connection.end();
+    });
+
 }
