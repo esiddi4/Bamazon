@@ -182,7 +182,7 @@ function addNewProduct() {
       {
         name: "stockQty",
         type: "input",
-        message: "How many units are this product are being added to inventory?",
+        message: "How many units of this product are being added to inventory?",
         validate: function(value) {
           if (isNaN(value) === false) {
             return true;
