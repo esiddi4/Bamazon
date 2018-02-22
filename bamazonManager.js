@@ -76,7 +76,7 @@ function viewProducts() {
 
 function viewLowInventory() {
 
-	var query = "SELECT product_name FROM products WHERE stock_quantity < 25";
+	var query = "SELECT * FROM products WHERE stock_quantity < 25";
 	connection.query(query, function(err, res) {
 		for (var i = 0; i < res.length; i++) {
 		  console.log("Product: " + res[i].product_name + " || Inventory: " + res[i].stock_quantity);
@@ -120,23 +120,37 @@ function addToInventory() {
 	      .then(function(answer) {
 
 	      	var product = answer.product;
-	      	var units = answer.units;
+	      	var units = parseInt(answer.units);
+	  		updateInventory(product, units);
 
-	      	var query = 'UPDATE products SET stock_quantity = stock_quantity + ' + parseInt(units) + ' WHERE product_name = " ' + product + '"';
-			connection.query(query, function(err, res) {
-				console.log(query);
-		      	console.log(units + " units were successfully added to " + product + ".");
-		    });
-
-	      });
-
-	      connection.end();
+		  });
 	});
 
 }
 
 
-function addNewProduct() {
+// function addNewProduct() {
 
 
+// }
+
+
+function updateInventory(product, quantity){
+	// var product = product;
+  	connection.query("SELECT * FROM products WHERE product_name = ?", [product] , function(err, results) {
+  		var updatedStock = results[0].stock_quantity + quantity;
+		connection.query('UPDATE products SET ? WHERE ?',
+		[{
+			stock_quantity: updatedStock
+		},
+		{
+			product_name: product
+		}],
+		function(err, res){
+			console.log("Inventory updated: " + quantity + " units were successfully added to " + product + ".");
+		});
+
+		connection.end();
+	});
+  	// connection.end();
 }
